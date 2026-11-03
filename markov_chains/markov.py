@@ -41,9 +41,9 @@ class MarkovChain:
             raise ValueError("Initial probability vector must sum to 1.")
         self._P0 = value
 
-    def stationary_probability(self)-> ndarray:
+    def _calculate_probability_stationary_iterative_approach(self,)->ndarray:
         """
-        calculate the stationary probability.
+        calculate the stationary probability using iterarive approach.
 
         :return: stationary probability vector
         :rtype: ndarray
@@ -55,11 +55,38 @@ class MarkovChain:
             current_p = current_p @ self.P 
         return current_p
 
-        
+    def _calculate_probability_stationary_linear_approach(self, )->ndarray:
+        """
+        calculate the stationary probability using linear approach.
+
+        :return: stationary probability vector
+        :rtype: ndarray
+        """
+        n:int = self.P.shape[0]
+        B:ndarray = np.array([0 for _ in range(n)]+ [1])
+        B = B.reshape((n+1, 1))
+        A:ndarray = np.vstack([self.P.T - np.eye(n), np.ones((1, n))])
+        return np.linalg.solve(A.T @ A, A.T @ B).flatten()
+    
+    def stationary_probability(self, method:str="iterative")-> ndarray:
+        """
+        calculate the stationary probability.
+
+        :return: stationary probability vector
+        :rtype: ndarray
+        """
+        if not method in ["iterative", "linear"]:
+            raise ValueError(f"{method} is not exist as method of solving.")
+
+        if method == "iterative":
+            return self._calculate_probability_stationary_iterative_approach()
+        elif method == "linear":
+            return self._calculate_probability_stationary_linear_approach()
+        else:
+            pass
 
 
-
-    def calculate_probabilities(self, n: int)-> ndarray:
+    def calculate_probabilities(self, n: int,method:str = "iterative" )-> ndarray:
         """
         Calculate the vector of probability after n iteration.
 
@@ -69,10 +96,15 @@ class MarkovChain:
         :return: probability vector after n iterations
         :rtype: ndarray
         """
+        if not method in ["iterative", "matrix_power"]:
+            raise ValueError(f"{method} is not exist as method of solving.")
         current_p: ndarray = self.P0.copy()
-        for _ in range(n):
-            current_p = current_p @ self.P
-        return current_p
+        if method =="iterative":
+            for _ in range(n):
+                current_p = current_p @ self.P
+            return current_p
+        else:
+            return self.P0 @ np.linalg.matrix_power(self.P, n)
 
     def probability_at_state(self, n: int, state: int)-> float:
         """
@@ -149,9 +181,9 @@ class MarkovChain:
         return iterations
 
 
-    def simulate_chain(self,)-> None:
+    def plot_transition_diagram(self,)-> None:
         """
-        Simulate a Markov chain.
+        Plot the transition diagram of the Markov chain.
 
         :return: none
         :rtype: None
