@@ -102,3 +102,4 @@ At the start, the user chooses one of the three sites at random. Afterwards, the
 - Python 3
 - `numpy`
 - `matplotlib`
+- `networkx`
