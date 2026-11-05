@@ -22,6 +22,10 @@ class MarkovChain:
             raise TypeError("Transition matrix must be a numpy ndarray.")
         if value.ndim != 2 or value.shape[0] != value.shape[1]:
             raise ValueError("Transition matrix must be square.")
+        for row in value:
+            for element in row:
+                if element < 0 or element > 1:
+                    raise ValueError("Transition matrix elements must be between 0 and 1.")
         if not np.allclose(value.sum(axis=1), 1):
             raise ValueError("Rows of transition matrix must sum to 1.")
         self._P = value
@@ -37,6 +41,11 @@ class MarkovChain:
             raise TypeError("Initial probability vector must be a numpy ndarray.")
         if value.ndim != 1:
             raise ValueError("Initial probability vector must be a 1D array.")
+        for element in value:
+            if element < 0 or element > 1:
+                raise ValueError("Initial probability vector elements must be between 0 and 1.")
+        if value.shape[0] != self.P.shape[0]:
+            raise ValueError("Initial probability vector must have the same length as the number of states.")
         if not np.allclose(value.sum(), 1):
             raise ValueError("Initial probability vector must sum to 1.")
         self._P0 = value
@@ -143,7 +152,7 @@ class MarkovChain:
 
         plt.figure(figsize=(10, 6))
         for state in range(self.P0.shape[0]):
-            plt.plot(probability_vectors[:, state], label=f'State {state}')
+            plt.plot(probability_vectors[:, state], label=f'State {state+1}')
         plt.title('Evolution of Probabilities')
         plt.xlabel('Iteration')
         plt.ylabel('Probability')
@@ -168,14 +177,14 @@ class MarkovChain:
         :raises ValueError: if the probability is not between 0 and 1
         """
         lenght:int  = self.P0.shape[0]
-        if state < 0 or state >= lenght:
-            raise ValueError(f"State index must be between 0 and {lenght - 1}.")
+        if state < 1 or state > lenght:
+            raise ValueError(f"State index must be between 1 and {lenght}.")
         if probability < 0 or probability > 1:
             raise ValueError("Probability must be between 0 and 1.")
 
         current_p: ndarray = self.P0.copy()
         iterations: int = 0
-        while current_p[state] < probability:
+        while current_p[state-1] < probability:
             current_p = current_p @ self.P
             iterations += 1
         return iterations
