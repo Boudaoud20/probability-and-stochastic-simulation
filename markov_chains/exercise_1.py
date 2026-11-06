@@ -38,19 +38,22 @@ def build_transition_matrix() -> ndarray:
 
 transition_matr:ndarray = build_transition_matrix()
 
-def random_experiment_without_markov():
+def random_experiment_without_markov()->int:
     """
     Simulates a random experiment without using Markov chains.
 
-    :return: none
-    :rtype: None
+    :return: The number of steps taken.
+    :rtype: int
     """
     current_state:int  = start_s
+    steps:int = 0
     while True:
         next_states:list = maze[current_state]
         if not next_states:
             break
         current_state = np.random.choice(next_states)
+        steps += 1
+    return steps
 
 if __name__ == "__main__":
     markov_chain: MarkovChain = MarkovChain(P=transition_matr, P0=P0) #1
@@ -75,10 +78,13 @@ if __name__ == "__main__":
     print(f"Time taken: {(end_time - start_time)/60:e} minutes")
 
 
-    start_time: float = time.time()#7
-    random_experiment_without_markov()
-    end_time: float = time.time()
-    print(f"\n\n7. Time taken for random experiment without Markov chains: {(end_time - start_time)/60:e} minutes")
+    experiment: int = 100000 #7 
+    steps:int = 0
+    for _ in range(experiment):
+        steps += random_experiment_without_markov()
+    average_steps: float = steps / experiment
+    print(f"\n\n7. Average number of steps taken in {experiment} experiments without using Markov chains: {average_steps:.4f}")
+    
 
 
 

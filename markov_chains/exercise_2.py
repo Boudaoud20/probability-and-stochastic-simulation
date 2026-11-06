@@ -1,7 +1,7 @@
 from markov import MarkovChain
 import numpy as np
 from numpy import ndarray
-import time
+
 
 maze:dict ={
     "A": ["A","B","B"],
@@ -46,21 +46,26 @@ def build_transition_matrix() -> ndarray:
     return matrix
 
 
-def random_experiment_without_markov():
+def random_experiment_without_markov()->int:
     """
     Simulates a random experiment without using Markov chains.
 
-    :return: none
-    :rtype: None
+    :return: The number of steps taken.
+    :rtype: int
     """
     current_state:str  = "A"
+    steps:int = 0
+
     while True:
+        
         next_states:list = maze[current_state]
         if not next_states:
             break
+        steps += 1
         current_state = np.random.choice(next_states)
         if current_state == "C":
             break
+    return steps
 
 
 if __name__ == "__main__":
@@ -80,10 +85,12 @@ if __name__ == "__main__":
 
     markov_chain.plot_probabilities(n=20,)#5
 
-    start_time: float = time.time()
-    random_experiment_without_markov()#6
-    end_time: float = time.time()
-    print(f"\n\n6. Time taken for random experiment without Markov chains: {(end_time - start_time)/60:e} minutes",)
+    experiment: int = 100000 #6
+    steps:int = 0
+    for _ in range(experiment):
+        steps += random_experiment_without_markov()
+    average_steps: float = steps / experiment
+    print(f"\n\n6. Average number of steps taken in {experiment} experiments without using Markov chains: {average_steps:.4f}") 
 
 
 

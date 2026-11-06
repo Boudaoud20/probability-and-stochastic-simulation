@@ -50,19 +50,22 @@ class MarkovChain:
             raise ValueError("Initial probability vector must sum to 1.")
         self._P0 = value
 
-    def _calculate_probability_stationary_iterative_approach(self,)->ndarray:
+    def _calculate_probability_stationary_iterative_approach(self,max_iter:int = 90000)->ndarray:
         """
         calculate the stationary probability using iterarive approach.
 
         :return: stationary probability vector
         :rtype: ndarray
+        :raises RuntimeError: if the stationary probability does not converge within the maximum number of iterations
         """
         current_p: ndarray = self.P0.copy()
         last_p: ndarray = np.ones((self.P0.shape[0],)) 
-        while not np.allclose(last_p, current_p):
+        for _ in range(max_iter):
+            if np.allclose(last_p, current_p):
+                return current_p
             last_p = current_p
-            current_p = current_p @ self.P 
-        return current_p
+            current_p = current_p @ self.P
+        raise RuntimeError("Stationary probability did not converge.")
 
     def _calculate_probability_stationary_linear_approach(self, )->ndarray:
         """
@@ -104,7 +107,13 @@ class MarkovChain:
 
         :return: probability vector after n iterations
         :rtype: ndarray
+
+        :raises ValueError: if n is not a positive integer
+        :raises ValueError: if method is not "iterative" or "matrix_power"
         """
+        if n < 0:
+            raise ValueError("Number of iterations must be a positive integer.")
+
         if not method in ["iterative", "matrix_power"]:
             raise ValueError(f"{method} is not exist as method of solving.")
         current_p: ndarray = self.P0.copy()
@@ -144,7 +153,12 @@ class MarkovChain:
 
         :return: none
         :rtype: None
+
+        :raises ValueError: if n is not a positive integer
         """
+        if n < 1:
+            raise ValueError("Number of iterations must be a positive integer.")
+        
         probability_vectors  = np.zeros((n + 1, self.P0.shape[0]))
         probability_vectors[0] = self.P0
         for i in range(1, n + 1):
