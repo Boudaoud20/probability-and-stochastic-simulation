@@ -57,10 +57,13 @@ if __name__ == "__main__":
     markov_chain.plot_transition_diagram()
     print("1. Transition Matrix:\n", markov_chain.P)
 
-    stationary_vector: ndarray = markov_chain.stationary_probability(method="linear")#2
-    print("\n\n2. Stationary Probability Vector:\n", stationary_vector)
+    stationary_vector_m1: ndarray = markov_chain.stationary_probability(method="linear")#2
+    print("\n\n2. Stationary Probability Vector:\n", stationary_vector_m1)
 
-    vector_p: ndarray = markov_chain.calculate_probabilities(n=50,)#3
+    stationary_vector_m2: ndarray = markov_chain.stationary_probability()#3
+    print("\n\n3. Stationary Probability Vector using iteration approach:\n", stationary_vector_m2)
+
+    vector_p: ndarray = markov_chain.calculate_probabilities(n=50,)#4
     print("\n\n3. Probability Vector after 50 steps:\n", vector_p)
 
     markov_chain.plot_probabilities(n=50,)#5
