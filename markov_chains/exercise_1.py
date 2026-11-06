@@ -1,4 +1,4 @@
-from markov import MarkovChain
+from .markov import MarkovChain
 import numpy as np
 from numpy import ndarray
 import time

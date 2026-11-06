@@ -92,10 +92,8 @@ class MarkovChain:
 
         if method == "iterative":
             return self._calculate_probability_stationary_iterative_approach()
-        elif method == "linear":
-            return self._calculate_probability_stationary_linear_approach()
         else:
-            pass
+            return self._calculate_probability_stationary_linear_approach()
 
 
     def calculate_probabilities(self, n: int,method:str = "iterative" )-> ndarray:
@@ -211,16 +209,15 @@ class MarkovChain:
         :return: none
         :rtype: None
         """
-        nodes = []
         n1, n2 = self.P.shape
-
-        for i in range(n1):
-            for j in range(n2):
-                if self.P[i, j] > 0:
-                    nodes.append((i, j, self.P[i, j]))
-        nodes = list(set([node for edge in nodes for node in edge[:2]]))
-        edges = [(i, j, self.P[i, j]) for i in range(n1) for j in range(n2) if self.P[i, j] > 0]
-        G = nx.DiGraph()
+        nodes: list[int] = list(range(n1))
+        edges = [
+            (i, j, self.P[i, j])
+            for i in range(n1)
+            for j in range(n2)
+            if self.P[i, j] > 0
+        ]
+        G: nx.DiGraph = nx.DiGraph()
         G.add_nodes_from(nodes)
         G.add_weighted_edges_from(edges)
 
