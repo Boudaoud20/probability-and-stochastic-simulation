@@ -61,7 +61,7 @@ class MarkovChain:
         current_p: ndarray = self.P0.copy()
         last_p: ndarray = np.ones((self.P0.shape[0],)) 
         for _ in range(max_iter):
-            if np.allclose(last_p, current_p):
+            if np.allclose(last_p, current_p, rtol=0.0, atol=1e-17):
                 return current_p
             last_p = current_p
             current_p = current_p @ self.P
