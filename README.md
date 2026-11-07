@@ -14,7 +14,6 @@ probability-and-stochastic-simulation/
 │   ├── exercise_1.py
 │   ├── exercise_2.py
 │   ├── exercises.md
-│   └── figure1.png
 ├── .gitignore
 ├── LICENSE
 └── README.md
